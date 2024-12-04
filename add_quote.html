@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>all for you</title>
+    <style>
+        @font-face {
+            font-family: 'Identifier';
+            src: url('fonts/IDTFIdentifier-0.1-Bold.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #262C2C;
+            font-family: 'Identifier', Arial, sans-serif;
+            color: #E1384D;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 90px;
+            cursor: pointer;
+        }
+
+        .title {
+            font-size: 48px;
+            margin: 10px 0;
+            position: absolute;
+            top: 20px;
+            text-align: center;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+        }
+
+        .quote-input {
+            padding: 10px;
+            width: 300px;
+            border: 2px solid #E1384D;
+            border-radius: 5px;
+            background-color: #262C2C;
+            color: #E1384D;
+            font-family: 'Identifier', Arial, sans-serif;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .quote-input::placeholder {
+            color: #E1384D;
+            opacity: 0.7;
+        }
+
+        .quote-input:focus {
+            outline: none;
+            border-color: white;
+        }
+
+        .enter-button {
+            cursor: pointer;
+            width: 80px;
+            height: auto;
+        }
+
+        .erase-button {
+            cursor: pointer;
+            background-color: #E1384D;
+            color: #CCCCCC;
+            padding: 0px 0px;
+            font-size: 24px;
+            font-family: 'Identifier', Arial, sans-serif;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            /*border: none;*/
+        }
+
+        .erase-button:hover {
+            background-color: #262C2C;
+            color: #E1384D;
+        }
+
+        .feedback {
+            margin-top: 10px;
+            font-size: 20px;
+            font-style: italic;
+            color: #E1384D;
+            text-align: center;
+        }
+
+        @media (max-width: 480px) {
+            .title {
+                font-size: 28px;
+            }
+
+            .logo {
+                width: 60px;
+            }
+
+            .quote-input {
+                width: 200px;
+            }
+
+            .enter-button {
+                width: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Logo linking back to the main page -->
+    <a href="index.html">
+        <img src="icons/AFYlogo.png" alt="Logo" class="logo">
+    </a>
+
+    <!-- Title -->
+    <div class="title" id="dynamicTitle">ALL FOR <u>YOU</u></div>
+
+    <!-- Input container -->
+    <div class="container">
+        <input type="text" id="quoteInput" class="quote-input" placeholder="Enter your quote..." />
+        <br />
+        <img src="icons/enter-button.png" alt="Enter Button" class="enter-button" onclick="addQuote()" />
+
+        <!-- Erase All Quotes button -->
+        <button class="erase-button" onclick="deleteAllQuotes()">Erase All Quotes</button>
+
+        <!-- Feedback message -->
+        <div id="feedback" class="feedback"></div>
+    </div>
+
+    <script>
+        // Function to check if a name exists in localStorage and update the title
+        function updateTitle() {
+            const userName = localStorage.getItem("userName");
+
+            if (userName) {
+                const titleElement = document.getElementById("dynamicTitle");
+                titleElement.innerHTML = `ALL FOR <u>${userName.toUpperCase()}</u>`;
+            }
+        }
+
+        // Function to add a new quote
+        function addQuote() {
+            const quoteInput = document.getElementById("quoteInput");
+            const feedback = document.getElementById("feedback");
+            const newQuote = quoteInput.value.trim();
+
+            if (!newQuote) {
+                feedback.textContent = "Please enter a valid quote!";
+                return;
+            }
+
+            // Send the quote to the backend API
+            fetch('http://localhost:3000/quotes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ quote: newQuote })
+            })
+            .then(response => response.json())
+            .then(data => {
+                feedback.textContent = data.message || "Your quote has been added!";
+                quoteInput.value = ""; // Clear the input
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                feedback.textContent = "An error occurred while adding the quote.";
+            });
+        }
+
+        // Function to erase all quotes (for now, only local storage)
+        async function deleteAllQuotes() {
+            try {
+                const response = await fetch('http://localhost:3000/quotes', {
+                    method: 'DELETE',
+                });
+                if (response.ok) {
+                    alert('All quotes have been deleted!');
+                    loadQuotes(); // Reload quotes to reflect the change
+                } else {
+                    throw new Error('Failed to delete quotes.');
+                }
+
+            } catch (error) {
+
+                console.error('Error deleting quotes:', error);
+                alert('Error deleting quotes.');
+            }
+        }
+
+        // Initialize the page
+        updateTitle();
+    </script>
+</body>
+</html>

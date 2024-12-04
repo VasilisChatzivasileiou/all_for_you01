@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>all for you</title>
+    <style>
+        /* Load the custom font */
+        @font-face {
+            font-family: 'Identifier';
+            src: url('fonts/IDTFIdentifier-0.1-Bold.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #262C2C; /* Fallback color */
+            background-image: url('images/soul.png'); /* Add your image path here */
+            background-size: cover; /* Default: Cover the screen */
+            background-position: center; /* Center the image */
+            background-repeat: no-repeat; /* Prevent the image from repeating */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align title at the top */
+            height: 100vh;
+            color: white; /* Optional, to make text readable */
+            font-family: 'Identifier', Arial, sans-serif; /* Match the font of your main page */
+            box-sizing: border-box;
+        }
+
+        .logo {
+            position: absolute; /* Place it at the top-left corner */
+            top: 10px; /* Adjust spacing from the top */
+            left: 10px; /* Adjust spacing from the left */
+            width: 90px; /* Adjust size as needed */
+            height: auto; /* Keep the aspect ratio */
+            cursor: pointer; /* Indicate it's clickable */
+        }
+
+        .title {
+            margin-top: 30px; /* Adjust this for spacing from the top */
+            text-align: center;
+            color: #E1384D; /* Match the color in your main page */
+            font-size: 48px;
+        }
+
+        /* Responsive Design for smaller screens */
+        @media (max-width: 768px) {
+            body {
+                background-size: contain; /* Zoom out background for medium screens */
+            }
+
+            .title {
+                font-size: 36px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                background-size: 150%; /* Further zoom out for smaller screens */
+            }
+
+            .title {
+                font-size: 28px;
+            }
+
+            .logo {
+                width: 60px; /* Resize logo for smaller screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Clickable Logo in the top-left corner -->
+    <a href="index.html">
+        <img src="icons/AFYlogo.png" alt="Logo" class="logo">
+    </a>
+
+    <!-- Centered Title -->
+    <div class="title">ALL FOR <u>YOU</u></div>
+    <script>
+
+        // Function to load the saved name and update the title
+        function loadSavedName() {
+            const savedName = localStorage.getItem('userName'); // Retrieve name from localStorage
+            if (savedName) {
+                // Update the title with the saved name
+                const titleElement = document.querySelector('.title');
+                if (titleElement) {
+                    titleElement.innerHTML = `ALL FOR <u>${savedName}</u>`;
+                }
+            }
+        }
+        // Call the function when the page loads
+        window.onload = loadSavedName;
+
+    </script>
+</body>
+</html>
