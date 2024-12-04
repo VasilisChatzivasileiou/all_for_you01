@@ -189,7 +189,7 @@
 
         async function loadQuotes() {
             try {
-                const response = await fetch('http://localhost:3000/quotes');
+                const response = await fetch('https://all-for-you01.onrender.com/quotes');
                 if (!response.ok) {
                     throw new Error(`Failed to fetch quotes: ${response.statusText}`);
                 }
