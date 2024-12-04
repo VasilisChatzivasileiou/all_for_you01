@@ -166,7 +166,7 @@
             }
 
             // Send the quote to the backend API
-            fetch('http://localhost:3000/quotes', {
+            fetch('https://all-for-you01.onrender.com/quotes', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -187,7 +187,7 @@
         // Function to erase all quotes (for now, only local storage)
         async function deleteAllQuotes() {
             try {
-                const response = await fetch('http://localhost:3000/quotes', {
+                const response = await fetch('https://all-for-you01.onrender.com/quotes', {
                     method: 'DELETE',
                 });
                 if (response.ok) {
