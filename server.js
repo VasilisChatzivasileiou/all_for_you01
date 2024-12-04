@@ -22,6 +22,11 @@ const db = new sqlite3.Database('./quotes.db', (err) => {
     }
 });
 
+// Root route
+app.get('/', (req, res) => {
+    res.send("Welcome to the All For You Quotes API! Use '/quotes' to get all quotes.");
+});
+
 // Route to get all quotes
 app.get('/quotes', (req, res) => {
     db.all('SELECT text FROM quotes', [], (err, rows) => {
@@ -47,6 +52,7 @@ app.post('/quotes', (req, res) => {
     });
 });
 
+// Route to delete all quotes
 app.delete('/quotes', (req, res) => {
     db.run('DELETE FROM quotes', [], function (err) {
         if (err) {
@@ -55,9 +61,6 @@ app.delete('/quotes', (req, res) => {
         res.status(200).json({ message: "All quotes deleted successfully" });
     });
 });
-
-
-
 
 // Start the server
 app.listen(port, () => {
