@@ -1,26 +1,32 @@
 const express = require('express');
-const sqlite3 = require('sqlite3').verbose();
+const fs = require('fs');
 const cors = require('cors');
 const app = express();
 const port = 3000;
+
+// Path to the JSON file that will store the quotes
+const quotesFilePath = './quotes.json';
 
 // Middleware
 app.use(express.json());
 app.use(cors());
 
-// Initialize SQLite database
-const db = new sqlite3.Database('./quotes.db', (err) => {
-    if (err) {
-        console.error('Error opening database:', err.message);
-    } else {
-        console.log('Connected to SQLite database.');
-        // Create the quotes table if it doesn't exist
-        db.run(`CREATE TABLE IF NOT EXISTS quotes (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            text TEXT NOT NULL
-        )`);
-    }
-});
+// Initialize the JSON file if it doesn't exist
+if (!fs.existsSync(quotesFilePath)) {
+    fs.writeFileSync(quotesFilePath, JSON.stringify([]), 'utf8'); // Create an empty array for quotes
+    console.log('Initialized quotes.json file.');
+}
+
+// Helper function to read quotes from the JSON file
+const readQuotes = () => {
+    const data = fs.readFileSync(quotesFilePath, 'utf8');
+    return JSON.parse(data);
+};
+
+// Helper function to write quotes to the JSON file
+const writeQuotes = (quotes) => {
+    fs.writeFileSync(quotesFilePath, JSON.stringify(quotes, null, 2), 'utf8');
+};
 
 // Root route
 app.get('/', (req, res) => {
@@ -29,13 +35,13 @@ app.get('/', (req, res) => {
 
 // Route to get all quotes
 app.get('/quotes', (req, res) => {
-    db.all('SELECT text FROM quotes', [], (err, rows) => {
-        if (err) {
-            return res.status(500).json({ error: 'Failed to fetch quotes' });
-        }
-        const quotes = rows.map(row => row.text);
+    try {
+        const quotes = readQuotes();
         res.json(quotes);
-    });
+    } catch (error) {
+        console.error('Error reading quotes:', error);
+        res.status(500).json({ error: 'Failed to fetch quotes' });
+    }
 });
 
 // Route to add a new quote
@@ -44,22 +50,27 @@ app.post('/quotes', (req, res) => {
     if (!quote) {
         return res.status(400).json({ error: "Quote is required" });
     }
-    db.run('INSERT INTO quotes (text) VALUES (?)', [quote], function(err) {
-        if (err) {
-            return res.status(500).json({ error: 'Failed to add quote' });
-        }
+
+    try {
+        const quotes = readQuotes();
+        quotes.push(quote); // Add the new quote to the list
+        writeQuotes(quotes); // Save the updated quotes list
         res.status(201).json({ message: "Quote added successfully" });
-    });
+    } catch (error) {
+        console.error('Error adding quote:', error);
+        res.status(500).json({ error: 'Failed to add quote' });
+    }
 });
 
 // Route to delete all quotes
 app.delete('/quotes', (req, res) => {
-    db.run('DELETE FROM quotes', [], function (err) {
-        if (err) {
-            return res.status(500).json({ error: "Failed to delete quotes" });
-        }
+    try {
+        writeQuotes([]); // Overwrite the JSON file with an empty array
         res.status(200).json({ message: "All quotes deleted successfully" });
-    });
+    } catch (error) {
+        console.error('Error deleting quotes:', error);
+        res.status(500).json({ error: "Failed to delete quotes" });
+    }
 });
 
 // Start the server
