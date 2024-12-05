@@ -11,18 +11,23 @@ app.use(cors());
 // PostgreSQL connection setup
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL || 'your-postgresql-connection-string',
-    ssl: {
-        rejectUnauthorized: false, // Required for some cloud-hosted PostgreSQL services
-    },
+    ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false, // Enables SSL for cloud DBs
 });
 
+// Test database connection
+pool.connect()
+    .then(() => console.log('Connected to PostgreSQL database.'))
+    .catch(err => console.error('Error connecting to database:', err));
+
 // Initialize the quotes table if it doesn't exist
-pool.query(`
+const createTableQuery = `
     CREATE TABLE IF NOT EXISTS quotes (
         id SERIAL PRIMARY KEY,
         text TEXT NOT NULL
-    )
-`)
+    );
+`;
+
+pool.query(createTableQuery)
     .then(() => console.log('Quotes table initialized successfully.'))
     .catch(err => console.error('Error initializing database:', err));
 
@@ -68,6 +73,11 @@ app.delete('/quotes', async (req, res) => {
         console.error('Error deleting quotes:', error);
         res.status(500).json({ error: "Failed to delete quotes" });
     }
+});
+
+// Error handling for undefined routes
+app.use((req, res) => {
+    res.status(404).json({ error: 'Route not found' });
 });
 
 // Start the server
