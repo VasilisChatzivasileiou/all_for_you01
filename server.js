@@ -28,7 +28,7 @@ const createTableQuery = `
     CREATE TABLE IF NOT EXISTS quotes (
         id SERIAL PRIMARY KEY,
         text TEXT NOT NULL,
-        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 `;
 
