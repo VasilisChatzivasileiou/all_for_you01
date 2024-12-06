@@ -122,6 +122,42 @@
             color: #E1384D;
             text-align: center;
         }
+
+        @media (max-width: 480px) {
+            .title {
+                font-size: 28px;
+            }
+
+            .subtitle {
+                font-size: 12px;
+                margin-top: 63px;
+            }
+
+            .logo {
+                width: 60px;
+                align-items: center;
+            }
+
+            .quote-input {
+                width: 200px;
+            }
+
+            .enter-button {
+                width: 60px;
+            }
+            .container {
+                align-items: center;
+            }
+            .input-wrapper {
+                align-items: center;
+                width: 200px;
+            }
+            .char-counter {
+                right: 0px;
+                font-size: 15px;
+                bottom: -5px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -181,11 +217,10 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ quote: newQuote }) // Send quote as JSON object
+                body: JSON.stringify({ quote: newQuote })
             })
             .then(response => response.json())
             .then(data => {
-                // Fallback in case `data.message` is undefined
                 feedback.textContent = data.message || "Your quote has been added!";
                 quoteInput.value = "";
                 charCounter.textContent = "100"; // Reset counter

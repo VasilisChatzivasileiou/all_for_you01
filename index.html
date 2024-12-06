@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ALL FOR YOU</title>
+    <title>all for you</title>
     <style>
         @font-face {
             font-family: 'Identifier';
@@ -11,7 +11,6 @@
             font-weight: normal;
             font-style: normal;
         }
-
         body {
             margin: 0;
             padding: 50px;
@@ -31,28 +30,18 @@
             text-align: center;
         }
 
-        .quote-container {
+        .quote {
             position: absolute;
             top: 400px;
             left: 4%;
             right: 0;
             transform: translate(0, -50%);
             color: #E1384D;
+            font-size: 44px;
             text-align: center;
             padding: 0 20px;
             max-width: 90%;
             word-wrap: break-word;
-        }
-
-        .quote {
-            font-size: 44px;
-            margin-bottom: 10px;
-        }
-
-        .timestamp {
-            font-size: 16px;
-            color: #888;
-            text-align: right;
         }
 
         .next-button {
@@ -142,7 +131,6 @@
                 bottom: 50px;
             }
         }
-
         @media (max-width: 480px) {
             .next-button {
                 width: 80px;
@@ -150,27 +138,22 @@
                 font-size: 28px;
                 bottom: 20px;
             }
-
             .menu-icon {
                 width: 40px;
                 height: 30px;
             }
-
             .logo {
                 width: 60px;
                 height: 60px;
             }
-
             .title {
                 top: 50%;
                 font-size: 28px;
             }
-
-            .quote-container .quote {
+            .quote {
                 font-size: 30px;
                 top: 300px;
             }
-
             .menu-container {
                 top: 20%;
                 right: 19px;
@@ -185,21 +168,18 @@
 
     <div class="title">ALL FOR <u>YOU</u></div>
 
-    <div class="quote-container">
-        <div class="quote" id="quote">Loading...</div>
-        <div class="timestamp" id="timestamp"></div>
-    </div>
+    <div class="quote" id="quote">Loading...</div>
 
-    <button class="next-button" onclick="showNextQuote()">Next</button>
+    <button class="next-button" onclick="showNextQuote()">next</button>
 
     <div class="menu-container">
         <button class="menu-button" onclick="toggleMenu()">
             <img src="icons/Group 180.png" alt="Menu" class="menu-icon">
         </button>
         <div class="dropdown-menu" id="dropdownMenu">
-            <button onclick="navigateToWallpaper()">Info</button>
-            <button onclick="navigateToIntroduction()">Introduction</button>
-            <button onclick="navigateToAddQuote()">Add Quote</button>
+            <button onclick="navigateToWallpaper()">info</button>
+            <button onclick="navigateToIntroduction()">introduction</button>
+            <button onclick="navigateToAddQuote()">add quote</button>
         </div>
     </div>
 
@@ -214,30 +194,32 @@
                     throw new Error(`Failed to fetch quotes: ${response.statusText}`);
                 }
 
-                quotes = await response.json();
+                quotes = await response.json(); // Update the global `quotes` array
                 console.log('Fetched quotes:', quotes);
 
                 if (quotes.length > 0) {
-                    updateQuoteDisplay(currentQuoteIndex);
+                    document.getElementById('quote').innerText = quotes[currentQuoteIndex];
                 } else {
                     document.getElementById('quote').innerText = "No quotes available.";
                 }
             } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('quote').innerText = "Error loading quotes.";
+                console.error('Error loading quotes:', error);
+                document.getElementById('quote').innerText = "Failed to load quotes.";
             }
-        }
-
-        function updateQuoteDisplay(index) {
-            const quote = quotes[index];
-            document.getElementById('quote').innerText = quote.quote || "Quote missing!";
-            document.getElementById('timestamp').innerText = quote.timestamp || "No timestamp provided.";
         }
 
         function showNextQuote() {
             if (quotes.length === 0) return;
+
             currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
-            updateQuoteDisplay(currentQuoteIndex);
+            document.getElementById('quote').innerText = quotes[currentQuoteIndex];
+        }
+
+        function loadSavedName() {
+            const savedName = localStorage.getItem('userName');
+            if (savedName) {
+                document.querySelector('.title').innerHTML = `ALL FOR <u>${savedName}</u>`;
+            }
         }
 
         function toggleMenu() {
@@ -257,7 +239,10 @@
             window.location.href = "add_quote.html";
         }
 
-        document.addEventListener("DOMContentLoaded", loadQuotes);
+        document.addEventListener("DOMContentLoaded", () => {
+            loadQuotes();
+            loadSavedName();
+        });
     </script>
 </body>
 </html>

@@ -10,24 +10,20 @@ app.use(cors());
 
 // PostgreSQL connection setup
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL || 'postgres://postgres:picnicinbed990@localhost:5432/quotes_app',
+    connectionString: process.env.DATABASE_URL || 'your-postgresql-connection-string',
     ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false, // Enables SSL for cloud DBs
 });
 
 // Test database connection
 pool.connect()
     .then(() => console.log('Connected to PostgreSQL database.'))
-    .catch(err => {
-        console.error('Error connecting to database:', err);
-        process.exit(1); // Exit process if database connection fails
-    });
+    .catch(err => console.error('Error connecting to database:', err));
 
 // Initialize the quotes table if it doesn't exist
 const createTableQuery = `
     CREATE TABLE IF NOT EXISTS quotes (
         id SERIAL PRIMARY KEY,
-        text TEXT NOT NULL,
-        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        text TEXT NOT NULL
     );
 `;
 
@@ -37,35 +33,20 @@ pool.query(createTableQuery)
 
 // Root route
 app.get('/', (req, res) => {
-    res.send("Welcome to the All For You Quotes API! Use '/quotes' to interact with quotes.");
+    res.send("Welcome to the All For You Quotes API! Use '/quotes' to get all quotes.");
 });
 
 // Route to get all quotes
 app.get('/quotes', async (req, res) => {
     try {
-        const result = await pool.query('SELECT text, created_at FROM quotes ORDER BY id DESC'); // Fetch quotes sorted by latest first
-        const quotes = result.rows.map(row => {
-            const formattedTimestamp = new Date(row.created_at).toLocaleString('en-US', {
-                month: 'numeric',
-                day: 'numeric',
-                year: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric',
-                second: 'numeric',
-                hour12: true
-            });
-            return {
-                text: row.text,
-                timestamp: `Posted on ${formattedTimestamp}`
-            };
-        });
+        const result = await pool.query('SELECT text FROM quotes');
+        const quotes = result.rows.map(row => row.text); // Extract the text field from each row
         res.json(quotes);
     } catch (error) {
-        console.error('Error fetching quotes:', error.message);
-        res.status(500).json({ error: 'Failed to fetch quotes', details: error.message });
+        console.error('Error fetching quotes:', error);
+        res.status(500).json({ error: 'Failed to fetch quotes' });
     }
 });
-
 
 // Route to add a new quote
 app.post('/quotes', async (req, res) => {
@@ -75,31 +56,13 @@ app.post('/quotes', async (req, res) => {
     }
 
     try {
-        const result = await pool.query(
-            'INSERT INTO quotes (text) VALUES ($1) RETURNING id, text, created_at',
-            [quote]
-        );
-        const newQuote = result.rows[0];
-        const formattedTimestamp = new Date(newQuote.created_at).toLocaleString('en-US', {
-            month: 'numeric',
-            day: 'numeric',
-            year: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric',
-            hour12: true
-        });
-        res.status(201).json({
-            message: "Quote added successfully",
-            quote: newQuote.text,
-            timestamp: `Posted on ${formattedTimestamp}`
-        });
+        await pool.query('INSERT INTO quotes (text) VALUES ($1)', [quote]);
+        res.status(201).json({ message: "Quote added successfully" });
     } catch (error) {
-        console.error('Error adding quote:', error.message);
+        console.error('Error adding quote:', error);
         res.status(500).json({ error: 'Failed to add quote' });
     }
 });
-
 
 // Route to delete all quotes
 app.delete('/quotes', async (req, res) => {
@@ -107,7 +70,7 @@ app.delete('/quotes', async (req, res) => {
         await pool.query('DELETE FROM quotes');
         res.status(200).json({ message: "All quotes deleted successfully" });
     } catch (error) {
-        console.error('Error deleting quotes:', error.message);
+        console.error('Error deleting quotes:', error);
         res.status(500).json({ error: "Failed to delete quotes" });
     }
 });
