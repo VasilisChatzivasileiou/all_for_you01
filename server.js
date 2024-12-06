@@ -45,7 +45,8 @@ app.get('/', (req, res) => {
 // Route to get all quotes
 app.get('/quotes', async (req, res) => {
     try {
-        const result = await pool.query('SELECT text, created_at FROM quotes ORDER BY id DESC');
+        // Corrected to use 'created_at' instead of 'timestamp'
+        const result = await pool.query('SELECT text, created_at FROM quotes ORDER BY id DESC'); // Use 'created_at' here
         const quotes = result.rows.map(row => {
             const formattedTimestamp = new Date(row.created_at).toLocaleString('en-US', {
                 month: 'numeric',
@@ -58,7 +59,7 @@ app.get('/quotes', async (req, res) => {
             });
             return {
                 text: row.text,
-                timestamp: `Posted on ${formattedTimestamp}`  // Ensure this is being sent
+                timestamp: `Posted on ${formattedTimestamp}`
             };
         });
         res.json(quotes);
