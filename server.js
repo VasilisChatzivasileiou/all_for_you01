@@ -8,7 +8,6 @@ const port = 3000;
 app.use(express.json());
 app.use(cors());
 
-
 // PostgreSQL connection setup
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL || 'postgres://postgres:picnicinbed990@localhost:5432/quotes_app',
@@ -20,7 +19,7 @@ pool.connect()
     .then(() => console.log('Connected to PostgreSQL database.'))
     .catch(err => {
         console.error('Error connecting to database:', err);
-        // process.exit(1); // Optionally remove process exit to keep server running on db connection failure
+        // Optional: remove process.exit(1) to keep server running even if the database fails
     });
 
 // Initialize the quotes table if it doesn't exist
@@ -44,8 +43,7 @@ app.get('/', (req, res) => {
 // Route to get all quotes
 app.get('/quotes', async (req, res) => {
     try {
-        // Corrected to use 'created_at' instead of 'timestamp'
-        const result = await pool.query('SELECT text, created_at FROM quotes ORDER BY id DESC'); // Use 'created_at' here
+        const result = await pool.query('SELECT text, created_at FROM quotes ORDER BY id DESC');
         const quotes = result.rows.map(row => {
             const formattedTimestamp = new Date(row.created_at).toLocaleString('en-US', {
                 month: 'numeric',
@@ -77,11 +75,11 @@ app.post('/quotes', async (req, res) => {
 
     try {
         const result = await pool.query(
-            'INSERT INTO quotes (text) VALUES ($1) RETURNING id, text, timestamp',
+            'INSERT INTO quotes (text) VALUES ($1) RETURNING id, text, created_at',
             [quote]
         );
         const newQuote = result.rows[0];
-        const formattedTimestamp = new Date(newQuote.timestamp).toLocaleString('en-US', {
+        const formattedTimestamp = new Date(newQuote.created_at).toLocaleString('en-US', {
             month: 'numeric',
             day: 'numeric',
             year: 'numeric',
