@@ -6,9 +6,7 @@ const port = 3000;
 
 // Middleware
 app.use(express.json());
-app.use(cors({
-    origin: ['http://127.0.0.1:5500', 'http://localhost:5500', 'https://vasilischatzivasileiou.github.io'] // Add the GitHub Pages URL here
-}));
+app.use(cors());
 
 
 // PostgreSQL connection setup
