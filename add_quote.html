@@ -40,6 +40,14 @@
             text-align: center;
         }
 
+        .subtitle {
+            font-size: 20px;
+            font-style: italic;
+            color: #CCCCCC;
+            margin-top: 85px;
+            text-align: center;
+        }
+
         .container {
             display: flex;
             flex-direction: column;
@@ -120,8 +128,14 @@
                 font-size: 28px;
             }
 
+            .subtitle {
+                font-size: 12px;
+                margin-top: 63px;
+            }
+
             .logo {
                 width: 60px;
+                align-items: center;
             }
 
             .quote-input {
@@ -130,6 +144,18 @@
 
             .enter-button {
                 width: 60px;
+            }
+            .container {
+                align-items: center;
+            }
+            .input-wrapper {
+                align-items: center;
+                width: 200px;
+            }
+            .char-counter {
+                right: 0px;
+                font-size: 15px;
+                bottom: -5px;
             }
         }
     </style>
@@ -140,6 +166,7 @@
     </a>
 
     <div class="title" id="dynamicTitle">ALL FOR <u>YOU</u></div>
+    <div class="subtitle">inspire someone in your own words</div>
 
     <div class="container">
         <div class="input-wrapper">
