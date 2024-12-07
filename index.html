@@ -232,19 +232,26 @@
             const quote = quotes[index];
             document.getElementById('quote').innerText = quote.text || "No quote provided.";
 
-            // Convert UTC timestamp to local time and format it
-            const utcDate = new Date(quote.timestamp);
-            const localTime = utcDate.toLocaleString('en-US', {
-                hour: 'numeric',
-                minute: 'numeric',
-                hour12: true,
-                day: 'numeric',
-                month: 'numeric',
-                year: 'numeric',
-            });
+            try {
+                // Convert UTC timestamp to local time zone
+                const localDate = new Date(quote.timestamp);
+                const formattedTime = localDate.toLocaleString('en-US', {
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    hour12: true,
+                    day: 'numeric',
+                    month: 'numeric',
+                    year: 'numeric',
+                });
 
-            document.getElementById('timestamp').innerText = localTime || "Timestamp unavailable.";
+                document.getElementById('timestamp').innerText = formattedTime || "Timestamp unavailable.";
+            } catch (error) {
+                console.error('Error parsing timestamp:', error);
+                document.getElementById('timestamp').innerText = "Timestamp unavailable.";
+            }
         }
+
+
 
         function showNextQuote() {
             if (quotes.length === 0) return;

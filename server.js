@@ -14,6 +14,9 @@ const pool = new Pool({
     ssl: { rejectUnauthorized: false },
 });
 
+// Set the PostgreSQL timezone to UTC (optional)
+pool.query("SET timezone = 'UTC';");
+
 // Test database connection
 (async () => {
     try {
@@ -68,27 +71,18 @@ app.get('/quotes', async (req, res) => {
             'SELECT text, created_at FROM quotes ORDER BY id DESC LIMIT $1 OFFSET $2',
             [limit, offset]
         );
-        const quotes = result.rows.map(row => {
-            const date = new Date(row.created_at);
-            const time = date.toLocaleTimeString('en-US', {
-                hour: 'numeric',
-                minute: 'numeric',
-                hour12: true
-            });
-            const dayMonthYear = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
-            return {
-                text: row.text,
-                created_at: row.created_at, // Include raw timestamp
-                timestamp: `${time}, ${dayMonthYear}` // Formatted timestamp
-            };
-        });
+        const quotes = result.rows.map(row => ({
+            text: row.text,
+            created_at: row.created_at, // Raw timestamp in UTC
+            timestamp: new Date(row.created_at).toISOString() // Explicitly return UTC
+        }));
+
         res.status(200).json(quotes);
     } catch (error) {
         console.error('❌ Error fetching quotes:', error.message);
         res.status(500).json({ error: 'Failed to fetch quotes', details: error.message });
     }
 });
-
 
 // Route to add a new quote
 app.post('/quotes', async (req, res) => {
@@ -105,22 +99,12 @@ app.post('/quotes', async (req, res) => {
         );
 
         const newQuote = result.rows[0];
-        const formattedTimestamp = new Date(newQuote.created_at).toLocaleString('en-US', {
-            month: 'numeric',
-            day: 'numeric',
-            year: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric',
-            hour12: true,
-        });
-
         res.status(201).json({
             message: 'Quote added successfully.',
             quote: {
                 text: newQuote.text,
                 created_at: newQuote.created_at, // Raw ISO timestamp
-                timestamp: `Posted on ${formattedTimestamp}`,
+                timestamp: new Date(newQuote.created_at).toISOString(), // UTC timestamp
             },
         });
     } catch (error) {
