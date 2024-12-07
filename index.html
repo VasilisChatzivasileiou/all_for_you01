@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>all for you</title>
+    <title>ALL FOR YOU</title>
     <style>
         @font-face {
             font-family: 'Identifier';
@@ -11,6 +11,7 @@
             font-weight: normal;
             font-style: normal;
         }
+
         body {
             margin: 0;
             padding: 50px;
@@ -30,18 +31,28 @@
             text-align: center;
         }
 
-        .quote {
+        .quote-container {
             position: absolute;
             top: 400px;
             left: 4%;
             right: 0;
             transform: translate(0, -50%);
             color: #E1384D;
-            font-size: 44px;
             text-align: center;
             padding: 0 20px;
             max-width: 90%;
             word-wrap: break-word;
+        }
+
+        .quote {
+            font-size: 44px;
+            margin-bottom: 10px;
+        }
+
+        .timestamp {
+            font-size: 16px;
+            color: #888;
+            text-align: right;
         }
 
         .next-button {
@@ -131,6 +142,7 @@
                 bottom: 50px;
             }
         }
+
         @media (max-width: 480px) {
             .next-button {
                 width: 80px;
@@ -138,22 +150,27 @@
                 font-size: 28px;
                 bottom: 20px;
             }
+
             .menu-icon {
                 width: 40px;
                 height: 30px;
             }
+
             .logo {
                 width: 60px;
                 height: 60px;
             }
+
             .title {
                 top: 50%;
                 font-size: 28px;
             }
-            .quote {
+
+            .quote-container .quote {
                 font-size: 30px;
                 top: 300px;
             }
+
             .menu-container {
                 top: 20%;
                 right: 19px;
@@ -168,7 +185,10 @@
 
     <div class="title">ALL FOR <u>YOU</u></div>
 
-    <div class="quote" id="quote">Loading...</div>
+    <div class="quote-container">
+        <div class="quote" id="quote">Loading...</div>
+        <div class="timestamp" id="timestamp"></div>
+    </div>
 
     <button class="next-button" onclick="showNextQuote()">next</button>
 
@@ -177,9 +197,9 @@
             <img src="icons/Group 180.png" alt="Menu" class="menu-icon">
         </button>
         <div class="dropdown-menu" id="dropdownMenu">
-            <button onclick="navigateToWallpaper()">info</button>
-            <button onclick="navigateToIntroduction()">introduction</button>
-            <button onclick="navigateToAddQuote()">add quote</button>
+            <button onclick="navigateToWallpaper()">Info</button>
+            <button onclick="navigateToIntroduction()">Introduction</button>
+            <button onclick="navigateToAddQuote()">Add Quote</button>
         </div>
     </div>
 
@@ -194,32 +214,30 @@
                     throw new Error(`Failed to fetch quotes: ${response.statusText}`);
                 }
 
-                quotes = await response.json(); // Update the global `quotes` array
+                quotes = await response.json();
                 console.log('Fetched quotes:', quotes);
 
                 if (quotes.length > 0) {
-                    document.getElementById('quote').innerText = quotes[currentQuoteIndex];
+                    updateQuoteDisplay(currentQuoteIndex);
                 } else {
                     document.getElementById('quote').innerText = "No quotes available.";
                 }
             } catch (error) {
-                console.error('Error loading quotes:', error);
-                document.getElementById('quote').innerText = "Failed to load quotes.";
+                console.error('Error:', error);
+                document.getElementById('quote').innerText = "Error loading quotes.";
             }
+        }
+
+        function updateQuoteDisplay(index) {
+            const quote = quotes[index];
+            document.getElementById('quote').innerText = quote.text || "No quote provided.";
+            document.getElementById('timestamp').innerText = quote.created_at || "Timestamp unavailable.";
         }
 
         function showNextQuote() {
             if (quotes.length === 0) return;
-
             currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
-            document.getElementById('quote').innerText = quotes[currentQuoteIndex];
-        }
-
-        function loadSavedName() {
-            const savedName = localStorage.getItem('userName');
-            if (savedName) {
-                document.querySelector('.title').innerHTML = `ALL FOR <u>${savedName}</u>`;
-            }
+            updateQuoteDisplay(currentQuoteIndex);
         }
 
         function toggleMenu() {
@@ -239,10 +257,8 @@
             window.location.href = "add_quote.html";
         }
 
-        document.addEventListener("DOMContentLoaded", () => {
-            loadQuotes();
-            loadSavedName();
-        });
+        document.addEventListener("DOMContentLoaded", loadQuotes);
+
     </script>
 </body>
 </html>
