@@ -340,6 +340,21 @@
         }
 
         document.addEventListener("DOMContentLoaded", loadQuotes);
+
+        // Function to load the saved name and update the title
+        function loadSavedName() {
+            const savedName = localStorage.getItem('userName'); // Retrieve name from localStorage
+            if (savedName) {
+                // Update the title with the saved name
+                const titleElement = document.querySelector('.title');
+                if (titleElement) {
+                    titleElement.innerHTML = `ALL FOR <u>${savedName}</u>`;
+                }
+            }
+        }
+        // Call the function when the page loads
+        window.onload = loadSavedName;
+
     </script>
 </body>
 </html>
