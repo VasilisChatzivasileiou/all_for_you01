@@ -231,7 +231,7 @@
         function updateQuoteDisplay(index) {
             const quote = quotes[index];
             document.getElementById('quote').innerText = quote.text || "No quote provided.";
-            document.getElementById('timestamp').innerText = quote.created_at || "Timestamp unavailable.";
+            document.getElementById('timestamp').innerText = quote.timestamp || "Timestamp unavailable.";
         }
 
         function showNextQuote() {
@@ -258,7 +258,6 @@
         }
 
         document.addEventListener("DOMContentLoaded", loadQuotes);
-
     </script>
 </body>
 </html>

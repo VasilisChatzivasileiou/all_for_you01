@@ -78,7 +78,8 @@ app.get('/quotes', async (req, res) => {
             const dayMonthYear = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
             return {
                 text: row.text,
-                timestamp: `${time}, ${dayMonthYear}`
+                created_at: row.created_at, // Include raw timestamp
+                timestamp: `${time}, ${dayMonthYear}` // Formatted timestamp
             };
         });
         res.status(200).json(quotes);
