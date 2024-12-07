@@ -231,7 +231,19 @@
         function updateQuoteDisplay(index) {
             const quote = quotes[index];
             document.getElementById('quote').innerText = quote.text || "No quote provided.";
-            document.getElementById('timestamp').innerText = quote.timestamp || "Timestamp unavailable.";
+
+            // Convert UTC timestamp to local time and format it
+            const utcDate = new Date(quote.timestamp);
+            const localTime = utcDate.toLocaleString('en-US', {
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true,
+                day: 'numeric',
+                month: 'numeric',
+                year: 'numeric',
+            });
+
+            document.getElementById('timestamp').innerText = localTime || "Timestamp unavailable.";
         }
 
         function showNextQuote() {
