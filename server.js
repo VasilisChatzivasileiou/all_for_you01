@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
@@ -10,7 +12,7 @@ app.use(cors());
 
 // PostgreSQL connection setup
 const pool = new Pool({
-    connectionString: 'postgresql://postgres.klmmwyugwassiyrpjwsa:B5Z9BQkvLKP0nGx2@aws-0-eu-central-1.pooler.supabase.com:6543/postgres',
+    connectionString: process.env.DATABASE_URL, // Use environment variable
     ssl: { rejectUnauthorized: false },
 });
 
