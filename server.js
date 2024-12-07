@@ -68,26 +68,26 @@ app.get('/quotes', async (req, res) => {
             'SELECT text, created_at FROM quotes ORDER BY id DESC LIMIT $1 OFFSET $2',
             [limit, offset]
         );
-        console.log('✅ Quotes fetched from database:', result.rows);
-        const quotes = result.rows.map(row => ({
-            text: row.text,
-            created_at: row.created_at, // Raw ISO timestamp
-            timestamp: new Date(row.created_at).toLocaleString('en-US', {
-                month: 'numeric',
-                day: 'numeric',
-                year: 'numeric',
+        const quotes = result.rows.map(row => {
+            const date = new Date(row.created_at);
+            const time = date.toLocaleTimeString('en-US', {
                 hour: 'numeric',
                 minute: 'numeric',
-                second: 'numeric',
-                hour12: true,
-            }),
-        }));
+                hour12: true
+            });
+            const dayMonthYear = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+            return {
+                text: row.text,
+                timestamp: `${time}, ${dayMonthYear}`
+            };
+        });
         res.status(200).json(quotes);
     } catch (error) {
         console.error('❌ Error fetching quotes:', error.message);
         res.status(500).json({ error: 'Failed to fetch quotes', details: error.message });
     }
 });
+
 
 // Route to add a new quote
 app.post('/quotes', async (req, res) => {
