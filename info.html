@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All For You</title>
+    <style>
+        /* Load the custom font */
+        @font-face {
+            font-family: 'Identifier';
+            src: url('fonts/IDTFIdentifier-0.1-Bold.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #262C2C; /* Fallback color */
+            background-image: url('images/soul.png'); /* Add your image path here */
+            background-size: cover; /* Default: Cover the screen */
+            background-position: center; /* Center the image */
+            background-repeat: no-repeat; /* Prevent the image from repeating */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            color: white; /* Optional, to make text readable */
+            font-family: 'Identifier', Arial, sans-serif; /* Match the font of your main page */
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+
+        .logo {
+            position: absolute; /* Place it at the top-left corner */
+            top: 10px; /* Adjust spacing from the top */
+            left: 10px; /* Adjust spacing from the left */
+            width: 90px; /* Adjust size as needed */
+            height: auto; /* Keep the aspect ratio */
+            cursor: pointer; /* Indicate it's clickable */
+        }
+
+        .title {
+            position: absolute; /* Fix the title to the top */
+            top: 29px; /* Distance from the top of the page */
+            text-align: center;
+            width: 50%; /* Span across the page */
+            color: #E1384D; /* Match the color in your main page */
+            font-size: 48px;
+            margin: 0; /* Remove default margin */
+        }
+
+        .info-container {
+            margin-top: 120px; /* Push the content down */
+            width: 80%; /* Adjust width as needed */
+            max-width: 900px;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+            border-radius: 0px;
+            /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6); */
+            text-align: center; /* Center-align the content inside */
+        }
+
+        .info-section {
+            margin-bottom: 20px;
+        }
+
+        .info-section h2 {
+            color: white; /* Make the headers white */
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .info-section p {
+            font-size: 18px;
+            line-height: 1.6;
+            color: white; /* Make the text white */
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 36px;
+            }
+
+            .info-section h2 {
+                font-size: 20px;
+            }
+
+            .info-section p {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title {
+                font-size: 28px;
+            }
+
+            .logo {
+                width: 60px; /* Resize logo for smaller screens */
+            }
+
+            .info-container {
+                width: 90%;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Clickable Logo in the top-left corner -->
+    <a href="index.html">
+        <img src="icons/AFYlogo.png" alt="Logo" class="logo">
+    </a>
+
+    <!-- Title Fixed at the Top -->
+    <div class="title">ALL FOR <u>YOU</u></div>
+
+    <!-- Info Content Window -->
+    <div class="info-container">
+        <div class="info-section">
+            <h2>WHAT</h2>
+            <p>A platform designed to share and explore motivational and inspirational quotes from everyone. It’s a space where words of wisdom, encouragement, and positivity come together to uplift individuals and communities.</p>
+        </div>
+        <div class="info-section">
+            <h2>WHY</h2>
+            <p>Life can be challenging, and sometimes, the right words at the right moment can make all the difference. This project exists to inspire and motivate individuals with powerful thoughts, foster a community that values the transformative power of words, and create a resource of timeless quotes that uplift spirits, offer guidance, and spark creativity.</p>
+        </div>
+        <div class="info-section">
+            <h2>WHERE & WHEN</h2>
+            <p>Everywhere, at any time. Whether you're at home, in the office, or on the go, "ALL FOR YOU" is here for YOU, forever. Because inspiration knows no boundaries and no limits. Let this be a space where ideas transcend time and connect us all.</p>
+        </div>
+    </div>
+
+    <script>
+        // Function to load the saved name and update the title
+        function loadSavedName() {
+            const savedName = localStorage.getItem('userName'); // Retrieve name from localStorage
+            if (savedName) {
+                const titleElement = document.querySelector('.title');
+                if (titleElement) {
+                    titleElement.innerHTML = `ALL FOR <u>${savedName}</u>`;
+                }
+            }
+        }
+        // Call the function when the page loads
+        window.onload = loadSavedName;
+    </script>
+</body>
+</html>
